@@ -47,32 +47,42 @@ void Display_Board()
 	}
 }
 
+void Place_All_Ships()
+{
+	char* ships = new char[5];
+	int* sizes = new int[5];
+	string* names = new string[5];
 
-void Place_Ship()
+	ships[0] = 'C'; sizes[0] = 5; names[0] = "Aircraft Carrier";
+	ships[1] = 'B'; sizes[1] = 4; names[1] = "Battleship";
+	ships[2] = 'S'; sizes[2] = 3; names[2] = "Submarine";
+	ships[3] = 'D'; sizes[3] = 3; names[3] = "Destroyer";
+	ships[4] = 'P'; sizes[4] = 2; names[4] = "Patrol";
+
+	int i = 0;
+
+	while (i < 5)
+	{
+		cout << "Place " << names[i] << "!" << endl;
+		if (Place_Ship(ships[i], sizes[i]) == true)
+		{
+			i++;
+		}
+		else
+		{
+			continue;
+		}
+
+	}
+}
+
+
+bool Place_Ship(char ship_type, int ship_size)
 {
 	bool is_vertical = true;
 	string orientation;
 	int x_coord;
 	int y_coord;
-
-	int Carrier_Size = 5;
-	int Battleship_Size = 4;
-	int Submarine_Size = 3;
-	int Destroyer_Size = 3;
-	int Patrol_Size = 2;
-	char Choice;
-
-	cout << "Choose ship type" << endl;
-	cout << "[1] Aircraft Carrier (5)" << endl;
-	cout << "[2] Battleship (4)" << endl;
-	cout << "[3] Submarine (3)" << endl;
-	cout << "[4] Destroyer (3)" << endl;
-	cout << "[5] Patrol (2)" << endl;
-	cout << "Choice: ";
-	cin >> Choice;
-
-
-
 
 	cout << "Enter orientation (vertical/horizontal): ";
 	cin >> orientation;
@@ -84,7 +94,7 @@ void Place_Ship()
 	else if (orientation != "vertical")
 	{
 		cout << "Invalid choice, aborting shit placement!" << endl;
-		return;
+		return false;
 	}
 
 	cout << "Enter x coord: ";
@@ -94,22 +104,8 @@ void Place_Ship()
 	cin >> y_coord;
 	cout << endl;
 
-	switch (Choice)
-	{
-		case('1') :
-			Check_And_Place(Carrier_Size, 'C', is_vertical, y_coord, x_coord);
-		case('2') :
-			Check_And_Place(Battleship_Size, 'B', is_vertical, y_coord, x_coord);
-		case('3') :
-			Check_And_Place(Submarine_Size, 'S', is_vertical, y_coord, x_coord);
-		case('4') :
-			Check_And_Place(Destroyer_Size, 'D', is_vertical, y_coord, x_coord);
-		case('5') :
-			Check_And_Place(Patrol_Size, 'P', is_vertical, y_coord, x_coord);
-
-	}
-
-
+	
+	return Check_And_Place(ship_size, ship_type, is_vertical, y_coord, x_coord);
 
 	}
 
@@ -186,11 +182,8 @@ int main()
 {
 	Board* test1 = new Board();
 	
-	for (int i = 0; i < 5; i++)
-	{
-		test1->Place_Ship();
-		test1->Display_Board();
-	}
+	test1->Place_All_Ships();
+	test1->Display_Board();
 
 
 	return 0;
