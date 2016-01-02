@@ -281,6 +281,7 @@ bool Place_Ship(char ship_type, int ship_size)
 };
 
 
+
 class Player
 {
 public:
@@ -301,10 +302,10 @@ public:
 		int x_coords;
 
 
-		cout << "Enter y coordinates: ";
+		cout << "Enter x coordinates: ";
 		cin >> y_coords;
 		cout << endl;
-		cout << "Enter x coordinates: ";
+		cout << "Enter y coordinates: ";
 		cin >> x_coords;
 
 		int* output = new int[2];
@@ -320,6 +321,67 @@ public:
 		return player_board;
 	}
 };
+
+
+void run_game(Player* player1, Player* player2)
+{
+	Board* player1_board = player1->get_board();
+	Board* player2_board = player2->get_board();
+	int* firing_coordinates;
+
+	int game_code1 = 0;
+	int game_code2 = 0;
+
+	while (game_code1 != 3 && game_code2 != 3)
+	{
+
+		while (true)
+		{
+			cout << "Player 1's turn to fire!!!" << endl;
+			cout << endl;
+			firing_coordinates = player1->fire_weapon();
+			game_code1 = player2_board->process_fire(firing_coordinates[0], firing_coordinates[1]);
+			delete[] firing_coordinates;
+			player2_board->Display_Board();
+
+			if (game_code1 == 2)
+			{
+				continue;
+			}
+			else
+			{
+				break;
+			}
+			
+		}
+
+		while (true)
+		{
+			cout << "Player 2's turn to fire!!!" << endl;
+			cout << endl;
+			firing_coordinates = player2->fire_weapon();
+			game_code2 = player1_board->process_fire(firing_coordinates[0], firing_coordinates[1]);
+			delete[] firing_coordinates;
+			player1_board->Display_Board();
+
+			if (game_code2 == 2)
+			{
+				continue;
+			}
+			else
+			{
+				break;
+			}
+		}
+
+		
+
+		
+	}
+}
+
+
+
 
 
 
@@ -344,13 +406,9 @@ int main()
 	cout << endl;
 	player_2->player_board->Place_All_Ships();
 
-	cout << "Player 1's board: " << endl;
-	cout << endl;
-	player_1->player_board->Display_Board();
 
-	cout << "Player 2's board: " << endl;
-	cout << endl;
-	player_2->player_board->Display_Board();
+	run_game(player_1, player_2);
 
+	
 	return 0;
 }
