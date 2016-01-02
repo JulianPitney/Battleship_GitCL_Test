@@ -12,13 +12,20 @@ class Board
 {
 public:
 
-	int size;
+	int board_size;
 	char** board;
+	int ships_remaining = 5;
+	bool carrier_sunk = false; int carrier_life = 5;
+	bool battleship_sunk = false; int battleship_life = 4;
+	bool submarine_sunk = false; int submarine_life = 4;
+	bool destroyer_sunk = false; int destroyer_life = 3;
+	bool patrol_sunk = false; int patrol_life = 2;
+	
 
-Board()
+
+Board(int size)
 {
-	cout << "How big would you like the board to be? (int): ";
-	cin >> size;
+	board_size = size;
 
 	board = new char*[size];
 
@@ -36,9 +43,9 @@ Board()
 
 void Display_Board()
 {
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < board_size; i++)
 	{
-		for (int x = 0; x < size; x++)
+		for (int x = 0; x < board_size; x++)
 		{
 			cout << board[i][x] << " ";
 		}
@@ -113,7 +120,7 @@ bool Place_Ship(char ship_type, int ship_size)
 	{
 		if (is_vertical)
 		{
-			if (!(y_coord <= size - ship_size))
+			if (!(y_coord <= board_size - ship_size) || y_coord < 0 || y_coord > board_size)
 			{
 				cout << "Invalid coords, ship falls off board! Aborting placement." << endl;
 				return false;
@@ -141,7 +148,7 @@ bool Place_Ship(char ship_type, int ship_size)
 		}
 		else
 		{
-			if (!(x_coord <= size - ship_size))
+			if (!(x_coord <= board_size - ship_size) || x_coord < 0 || x_coord > board_size)
 			{
 				cout << "Invalid coords, ship falls off board! Aborting placement." << endl;
 				return false;
@@ -171,6 +178,147 @@ bool Place_Ship(char ship_type, int ship_size)
 		return true;
 	}
 
+
+
+	int process_fire(int x_coord, int y_coord)
+	{
+		char check_tile = board[y_coord][x_coord];
+
+		switch (check_tile)
+		{
+		case('-') :
+			cout << "Shot missed!" << endl;
+			return 0;
+		case('C') :
+			cout << "Hit!" << endl;
+			carrier_life -= 1;
+			board[y_coord][x_coord] = '*';
+			if (carrier_life == 0)
+			{
+				carrier_sunk = true;
+				ships_remaining -= 1;
+				cout << "Ship sunk!" << endl;
+				if (ships_remaining == 0)
+				{
+					cout << "All ships sunk! Game over!" << endl;
+					return 3;
+				}
+			}
+			return 1;
+		case('B') :
+			cout << "Hit!" << endl;
+			battleship_life -= 1;
+			board[y_coord][x_coord] = '*';
+			if (battleship_life == 0)
+			{
+				battleship_sunk = true;
+				ships_remaining -= 1;
+				cout << "Ship sunk!" << endl;
+				if (ships_remaining == 0)
+				{
+					cout << "All ships sunk! Game over!" << endl;
+					return 3;
+				}
+			}
+			return 1;
+		case('S') :
+			cout << "Hit!" << endl;
+			submarine_life -= 1;
+			board[y_coord][x_coord] = '*';
+			if (submarine_life == 0)
+			{
+				submarine_sunk = true;
+				ships_remaining -= 1;
+				cout << "Ship sunk!" << endl;
+				if (ships_remaining == 0)
+				{
+					cout << "All ships sunk! Game over!" << endl;
+					return 3;
+				}
+			}
+			return 1;
+		case('D') :
+			cout << "Hit!" << endl;
+			destroyer_life -= 1;
+			board[y_coord][x_coord] = '*';
+			if (destroyer_life == 0)
+			{
+				destroyer_sunk = true;
+				ships_remaining -= 1;
+				cout << "Ship sunk!" << endl;
+				if (ships_remaining == 0)
+				{
+					cout << "All ships sunk! Game over!" << endl;
+					return 3;
+				}
+			}
+			return 1;
+		case('P') :
+			cout << "Hit!" << endl;
+			patrol_life -= 1;
+			board[y_coord][x_coord] = '*';
+			if (patrol_life == 0)
+			{
+				patrol_sunk = true;
+				ships_remaining -= 1;
+				cout << "Ship sunk!" << endl;
+				if (ships_remaining == 0)
+				{
+					cout << "All ships sunk! Game over!" << endl;
+					return 3;
+				}
+			}
+			return 1;
+		case('*') :
+			cout << "You already shot there! Pick new coordinates!" << endl;
+			return 2;
+		}
+	}
+
+
+
+
+};
+
+
+class Player
+{
+public:
+
+
+	Board* player_board;
+
+
+	Player(int board_size)
+	{
+		player_board = new Board(board_size);
+	}
+
+	// Returns pointer to array containing firing coordinates
+	int* fire_weapon()
+	{
+		int y_coords;
+		int x_coords;
+
+
+		cout << "Enter y coordinates: ";
+		cin >> y_coords;
+		cout << endl;
+		cout << "Enter x coordinates: ";
+		cin >> x_coords;
+
+		int* output = new int[2];
+		output[0] = y_coords;
+		output[1] = x_coords;
+
+		return output;
+	}
+
+
+	Board* get_board()
+	{
+		return player_board;
+	}
 };
 
 
@@ -180,11 +328,29 @@ bool Place_Ship(char ship_type, int ship_size)
 
 int main()
 {
-	Board* test1 = new Board();
-	
-	test1->Place_All_Ships();
-	test1->Display_Board();
+	int size;
+	cout << "How big would you like the board to be? (int): ";
+	cin >> size;
 
+
+	Player* player_1 = new Player(size);
+	Player* player_2 = new Player(size);
+
+	cout << "Player 1's turn to place ships!" << endl;
+	cout << endl;
+	player_1->player_board->Place_All_Ships();
+	cout << endl;
+	cout << "Player 2's turn to place ships!" << endl;
+	cout << endl;
+	player_2->player_board->Place_All_Ships();
+
+	cout << "Player 1's board: " << endl;
+	cout << endl;
+	player_1->player_board->Display_Board();
+
+	cout << "Player 2's board: " << endl;
+	cout << endl;
+	player_2->player_board->Display_Board();
 
 	return 0;
 }
