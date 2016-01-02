@@ -17,7 +17,7 @@ public:
 	int ships_remaining = 5;
 	bool carrier_sunk = false; int carrier_life = 5;
 	bool battleship_sunk = false; int battleship_life = 4;
-	bool submarine_sunk = false; int submarine_life = 4;
+	bool submarine_sunk = false; int submarine_life = 3;
 	bool destroyer_sunk = false; int destroyer_life = 3;
 	bool patrol_sunk = false; int patrol_life = 2;
 	
@@ -188,6 +188,7 @@ bool Place_Ship(char ship_type, int ship_size)
 		{
 		case('-') :
 			cout << "Shot missed!" << endl;
+			board[y_coord][x_coord] = 'x';
 			return 0;
 		case('C') :
 			cout << "Hit!" << endl;
@@ -196,9 +197,9 @@ bool Place_Ship(char ship_type, int ship_size)
 			if (carrier_life == 0)
 			{
 				carrier_sunk = true;
-				ships_remaining -= 1;
+				ships_remaining--;
 				cout << "Ship sunk!" << endl;
-				if (ships_remaining == 0)
+				if (ships_remaining <= 0)
 				{
 					cout << "All ships sunk! Game over!" << endl;
 					return 3;
@@ -207,14 +208,14 @@ bool Place_Ship(char ship_type, int ship_size)
 			return 1;
 		case('B') :
 			cout << "Hit!" << endl;
-			battleship_life -= 1;
+			battleship_life--;
 			board[y_coord][x_coord] = '*';
 			if (battleship_life == 0)
 			{
 				battleship_sunk = true;
-				ships_remaining -= 1;
+				ships_remaining--;
 				cout << "Ship sunk!" << endl;
-				if (ships_remaining == 0)
+				if (ships_remaining <= 0)
 				{
 					cout << "All ships sunk! Game over!" << endl;
 					return 3;
@@ -228,9 +229,9 @@ bool Place_Ship(char ship_type, int ship_size)
 			if (submarine_life == 0)
 			{
 				submarine_sunk = true;
-				ships_remaining -= 1;
+				ships_remaining--;
 				cout << "Ship sunk!" << endl;
-				if (ships_remaining == 0)
+				if (ships_remaining <= 0)
 				{
 					cout << "All ships sunk! Game over!" << endl;
 					return 3;
@@ -244,9 +245,9 @@ bool Place_Ship(char ship_type, int ship_size)
 			if (destroyer_life == 0)
 			{
 				destroyer_sunk = true;
-				ships_remaining -= 1;
+				ships_remaining--;
 				cout << "Ship sunk!" << endl;
-				if (ships_remaining == 0)
+				if (ships_remaining <= 0)
 				{
 					cout << "All ships sunk! Game over!" << endl;
 					return 3;
@@ -260,9 +261,9 @@ bool Place_Ship(char ship_type, int ship_size)
 			if (patrol_life == 0)
 			{
 				patrol_sunk = true;
-				ships_remaining -= 1;
+				ships_remaining--;
 				cout << "Ship sunk!" << endl;
-				if (ships_remaining == 0)
+				if (ships_remaining <= 0)
 				{
 					cout << "All ships sunk! Game over!" << endl;
 					return 3;
@@ -348,6 +349,10 @@ void run_game(Player* player1, Player* player2)
 			{
 				continue;
 			}
+			else if (game_code1 == 3)
+			{
+				cout << "Player 1 wins!" << endl;
+			}
 			else
 			{
 				break;
@@ -357,6 +362,11 @@ void run_game(Player* player1, Player* player2)
 
 		while (true)
 		{
+			if (game_code1 == 3)
+			{
+				break;
+			}
+
 			cout << "Player 2's turn to fire!!!" << endl;
 			cout << endl;
 			firing_coordinates = player2->fire_weapon();
@@ -367,6 +377,10 @@ void run_game(Player* player1, Player* player2)
 			if (game_code2 == 2)
 			{
 				continue;
+			}
+			else if (game_code2 == 3)
+			{
+				cout << "Player 2 wins!" << endl;
 			}
 			else
 			{
